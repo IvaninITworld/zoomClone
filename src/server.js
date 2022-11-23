@@ -21,13 +21,22 @@ const wss = new WebSocket.Server({ server });
 //   console.log(socket);
 // }
 
+function onSocketClose() {
+  console.log("Disconnected from the Browser");
+}
+
+// 메세지를 담아두는 storage 가 없다면, 다른 브라우저에서는 해당 내용을 볼 수 없음
+// 각 브라우저에서 보내는 정보들이 담기게 되는 배열 !!
+const sockets = [];
+
 wss.on("connection", (socket) => {
+  sockets.push(socket);
   console.log("connected to Browser!");
-  socket.on("close", () => console.log("Disconnected from the server"));
+  socket.on("close", onSocketClose);
   socket.on("message", (message) => {
-    console.log(message);
+    // 전달 받아 담아뒀던 메세지를 꺼내서 보여줌 => 다른 브라우저에서 볼 수 가 있음!!
+    sockets.forEach((aSocket) => aSocket.send(message));
   });
-  socket.send("hello!!");
 });
 
 server.listen(3001, handleListen);
