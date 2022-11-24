@@ -41,8 +41,10 @@ wss.on("connection", (socket) => {
         sockets.forEach((aSocket) =>
           aSocket.send(`${socket.nickname}: ${message.payload}`)
         );
+        break;
       case "nickname":
         socket["nickname"] = message.payload;
+        break;
     }
     // 전달 받아 담아뒀던 메세지를 꺼내서 보여줌 => 다른 브라우저에서 볼 수 가 있음!!
   });
