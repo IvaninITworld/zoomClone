@@ -31,11 +31,22 @@ const sockets = [];
 
 wss.on("connection", (socket) => {
   sockets.push(socket);
+  socket["nickname"] = "Anon";
   console.log("connected to Browser!");
   socket.on("close", onSocketClose);
-  socket.on("message", (message) => {
+  socket.on("message", (msg) => {
+    const message = JSON.parse(msg);
+    switch (message.type) {
+      case "new_message":
+        sockets.forEach((aSocket) =>
+          aSocket.send(`${socket.nickname}: ${message.payload}`)
+        );
+        break;
+      case "nickname":
+        socket["nickname"] = message.payload;
+        break;
+    }
     // 전달 받아 담아뒀던 메세지를 꺼내서 보여줌 => 다른 브라우저에서 볼 수 가 있음!!
-    sockets.forEach((aSocket) => aSocket.send(message));
   });
 });
 
