@@ -1,4 +1,4 @@
-// import express from "express";
+// 맥 환경에서 사용하는 방식인 import express from "express" 대신 윈도우 환경에서 사용하는 방식으로 대체
 const express = require("express");
 const WebSocket = require("ws");
 const http = require("http");
@@ -7,19 +7,16 @@ const app = express();
 
 app.set("view engine", "pug");
 app.set("views", __dirname + "/views");
-app.use("/public", express.static(__dirname + "public"));
-app.get("/", (req, res) => res.render("home"));
-app.get("*", (req, res) => res.redirect("/"));
+app.use("/public", express.static(__dirname + "/public"));
+// 왜 req 대신 언더바(_)를 사용했는지 알아봐야겠음
+app.get("/", (_, res) => res.render("home"));
+app.get("/*", (_, res) => res.redirect("/"));
 
 const handleListen = () => console.log(`Listening on http://localhost:3001`);
 // app.listen(3001, handleListen);
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-
-// function handleConnection(socket) {
-//   console.log(socket);
-// }
 
 function onSocketClose() {
   console.log("Disconnected from the Browser");

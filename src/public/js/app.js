@@ -1,6 +1,7 @@
 const messageList = document.querySelector("ul");
 const nickForm = document.querySelector("#nick");
 const messageForm = document.querySelector("#message");
+// 주소값만 가져와
 const socket = new WebSocket(`ws://${window.location.host}`);
 
 function makeMessage(type, payload) {
@@ -11,6 +12,7 @@ function makeMessage(type, payload) {
 function handleOpen() {
   console.log("Connected to Server!");
 }
+
 socket.addEventListener("open", handleOpen);
 
 // html 쪽에 ul 이라는 리스트공간을 지정해두고,
@@ -36,12 +38,17 @@ function handleSubmit(event) {
   event.preventDefault();
   const input = messageForm.querySelector("input");
   socket.send(makeMessage("new_message", input.value));
+  const li = document.createElement("li");
+  li.innerText = `You : ${input.value}`;
+  messageList.append(li);
   input.value = "";
 }
+
 function handleNickSubmit(event) {
   event.preventDefault();
   const input = nickForm.querySelector("input");
   socket.send(makeMessage("nickname", input.value));
+  input.value = "";
 }
 
 messageForm.addEventListener("submit", handleSubmit);
